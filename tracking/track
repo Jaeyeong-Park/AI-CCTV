@@ -1,0 +1,29 @@
+import cv2
+import numpy as np
+from core.config import cfg
+import colorsys
+
+
+def read_class_names(class_file_name):
+    '''loads class name from a file'''
+    names = {}
+    with open(class_file_name, 'r') as data:
+        for ID, name in enumerate(data):
+            names[ID] = name.strip('\n')
+    return names
+
+def track_template_match(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES)):
+
+    image_h, image_w, _ = image.shape
+    for i, bbox in enumerate(bboxes):
+        if classes[class_ind] == 'person':
+            coor = np.array(bbox[:4], dtype=np.int32)
+            class_ind = int(bbox[5])
+
+            p_x = coor[0]
+            p_y = coor[1]
+            p_height = coor[3] - coor[1]
+            p_width = coor[2] - coor[1]
+
+            person_img = image[p_y:p_height, p_x:p_width]
+            cv2.imshow("cropped", person_img)
